@@ -6,21 +6,62 @@ const { Table, Column, Cell } = require('fixed-data-table-2');
 const FakeObjectDataListStore = require('../components/FakeObjectDataListStore');
 const { TextCell } = require('../components/cells');
 
+const SortTypes = {
+	ASC: 'ASC',
+	DESC: 'DESC',
+};
+
+function reverseSortDirection(sortDir) {
+	return sortDir === SortTypes.DESC ? SortTypes.ASC : SortTypes.DESC;
+}
+
+class SortHeaderCell extends React.Component {
+	constructor(props) {
+		super(props);
+	
+		this._onSortChange = this._onSortChange.bind(this);
+	}
+  
+	render() {
+	  var {onSortChange, sortDir, children, ...props} = this.props;
+	  return (
+		<Cell {...props}>
+			<a onClick={this._onSortChange}>
+				{children} {sortDir ? (sortDir === SortTypes.DESC ? '↓' : '↑') : ''}
+			</a>
+		</Cell>
+	  );
+	}
+  
+	_onSortChange(e) {
+		e.preventDefault();
+	
+		if (this.props.onSortChange) {
+			this.props.onSortChange(
+			this.props.columnKey,
+			this.props.sortDir ?
+				reverseSortDirection(this.props.sortDir) :
+				SortTypes.DESC
+			);
+		}
+	}
+}
+
 class DataListWrapper {
-  constructor(indexMap, data) {
-    this._indexMap = indexMap;
-    this._data = data;
-  }
+	constructor(indexMap, data) {
+		this._indexMap = indexMap;
+		this._data = data;
+	}
 
-  getSize() {
-    return this._indexMap.length;
-  }
+	getSize() {
+		return this._indexMap.length;
+	}
 
-  getObjectAt(index) {
-    return this._data.getObjectAt(
-      this._indexMap[index],
-    );
-  }
+	getObjectAt(index) {
+		return this._data.getObjectAt(
+			this._indexMap[index],
+		);
+	}
 }
 
 class App extends Component {
@@ -28,8 +69,15 @@ class App extends Component {
 		super(props);
 
 		this._dataList = new FakeObjectDataListStore(2000);
+		this._defaultSortIndexes = [];
+		var size = this._dataList.getSize();
+		for (var index = 0; index < size; index++) {
+			this._defaultSortIndexes.push(index);
+		}
 		this.state = {
 			filteredDataList: this._dataList,
+			sortedDataList: this._dataList,
+			colSortDirs: {},
 		};
 
 		this._onFilterFirstNameChange = this._onFilterFirstNameChange.bind(this);
@@ -37,23 +85,24 @@ class App extends Component {
 		this._onFilterStreetChange = this._onFilterStreetChange.bind(this);
 		this._onFilterZipCodeChange = this._onFilterZipCodeChange.bind(this);
 		this._onFilterCityChange = this._onFilterCityChange.bind(this);
+		this._onSortChange = this._onSortChange.bind(this);
 	}
 
 	_onFilterFirstNameChange(e) {
 		if (!e.target.value) {
-		this.setState({
-			filteredDataList: this._dataList,
-		});
+			this.setState({
+				filteredDataList: this._dataList,
+			});
 		}
 
 		var filterBy = e.target.value.toLowerCase();
 		var size = this._dataList.getSize();
 		var filteredIndexes = [];
 		for (var index = 0; index < size; index++) {
-		var {firstName} = this._dataList.getObjectAt(index);
-		if (firstName.toLowerCase().indexOf(filterBy) !== -1) {
-			filteredIndexes.push(index);
-		}
+			var {firstName} = this._dataList.getObjectAt(index);
+			if (firstName.toLowerCase().indexOf(filterBy) !== -1) {
+				filteredIndexes.push(index);
+			}
 		}
 
 		this.setState({
@@ -63,23 +112,23 @@ class App extends Component {
 
 	_onFilterLastNameChange(e) {
 		if (!e.target.value) {
-		this.setState({
-			filteredDataList: this._dataList,
-		});
+			this.setState({
+				filteredDataList: this._dataList,
+			});
 		}
 
 		var filterBy = e.target.value.toLowerCase();
 		var size = this._dataList.getSize();
 		var filteredIndexes = [];
 		for (var index = 0; index < size; index++) {
-		var {lastName} = this._dataList.getObjectAt(index);
-		if (lastName.toLowerCase().indexOf(filterBy) !== -1) {
-			filteredIndexes.push(index);
-		}
+			var {lastName} = this._dataList.getObjectAt(index);
+			if (lastName.toLowerCase().indexOf(filterBy) !== -1) {
+				filteredIndexes.push(index);
+			}
 		}
 
 		this.setState({
-		filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
@@ -101,47 +150,47 @@ class App extends Component {
 		}
 
 		this.setState({
-		filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterStreetChange(e) {
 		if (!e.target.value) {
-		this.setState({
-			filteredDataList: this._dataList,
-		});
+			this.setState({
+				filteredDataList: this._dataList,
+			});
 		}
 
 		var filterBy = e.target.value.toLowerCase();
 		var size = this._dataList.getSize();
 		var filteredIndexes = [];
 		for (var index = 0; index < size; index++) {
-		var {street} = this._dataList.getObjectAt(index);
-		if (street.toLowerCase().indexOf(filterBy) !== -1) {
-			filteredIndexes.push(index);
-		}
+			var {street} = this._dataList.getObjectAt(index);
+			if (street.toLowerCase().indexOf(filterBy) !== -1) {
+				filteredIndexes.push(index);
+			}
 		}
 
 		this.setState({
-		filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterZipCodeChange(e) {
 		if (!e.target.value) {
-		this.setState({
-			filteredDataList: this._dataList,
-		});
+			this.setState({
+				filteredDataList: this._dataList,
+			});
 		}
 
 		var filterBy = e.target.value.toLowerCase();
 		var size = this._dataList.getSize();
 		var filteredIndexes = [];
 		for (var index = 0; index < size; index++) {
-		var {zipCode} = this._dataList.getObjectAt(index);
-		if (zipCode.toLowerCase().indexOf(filterBy) !== -1) {
-			filteredIndexes.push(index);
-		}
+			var {zipCode} = this._dataList.getObjectAt(index);
+			if (zipCode.toLowerCase().indexOf(filterBy) !== -1) {
+				filteredIndexes.push(index);
+			}
 		}
 
 		this.setState({
@@ -149,8 +198,35 @@ class App extends Component {
 		});
 	}
 
+	_onSortChange(columnKey, sortDir) {
+		var sortIndexes = this._defaultSortIndexes.slice();
+		sortIndexes.sort((indexA, indexB) => {
+			var valueA = this._dataList.getObjectAt(indexA)[columnKey];
+			var valueB = this._dataList.getObjectAt(indexB)[columnKey];
+			var sortVal = 0;
+			if (valueA > valueB) {
+				sortVal = 1;
+			}
+			if (valueA < valueB) {
+				sortVal = -1;
+			}
+			if (sortVal !== 0 && sortDir === SortTypes.ASC) {
+				sortVal = sortVal * -1;
+			}
+
+			return sortVal;
+		});
+	
+		this.setState({
+			sortedDataList: new DataListWrapper(sortIndexes, this._dataList),
+			colSortDirs: {
+				[columnKey]: sortDir,
+			},
+		});
+	}
+
 	render() {
-		const {filteredDataList} = this.state;
+		const {filteredDataList, colSortDirs} = this.state;
 		let width = document.body.clientWidth;
 		return (
 			<div className="App">
@@ -195,40 +271,76 @@ class App extends Component {
 						{...this.props}>
 						<Column
 							columnKey="id"
-							header={<Cell>ID</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.id}>
+									ID
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							fixed={true}
 							width={width/10}
 						/>
 						<Column
 							columnKey="firstName"
-							header={<Cell>First Name</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.firstName}>
+									First Name
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							fixed={true}
 							width={width/6}
 						/>
 						<Column
 							columnKey="lastName"
-							header={<Cell>Last Name</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.lastName}>
+									Last Name
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							fixed={true}
 							width={width/6}
 						/>
 						<Column
 							columnKey="city"
-							header={<Cell>City</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.city}>
+									City
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							width={width/6}
 						/>
 						<Column
 							columnKey="street"
-							header={<Cell>Street</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.street}>
+									Street
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							width={width/6}
 						/>
 						<Column
 							columnKey="zipCode"
-							header={<Cell>Zip Code</Cell>}
+							header={
+								<SortHeaderCell
+									onSortChange={this._onSortChange}
+									sortDir={colSortDirs.zipCode}>
+									Zip Code
+								</SortHeaderCell>
+							}
 							cell={<TextCell data={filteredDataList} />}
 							width={width/6}
 						/>
