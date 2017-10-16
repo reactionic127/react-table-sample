@@ -26,3 +26,15 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.full-width {
+  width: 100%;
+}
+
+.margin-t-10 {
+  margin-top: 10px;
+}
+
+.custom-table {
+  margin-top: 10px;
+}
