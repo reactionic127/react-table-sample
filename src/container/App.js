@@ -75,7 +75,6 @@ class App extends Component {
 			this._defaultSortIndexes.push(index);
 		}
 		this.state = {
-			filteredDataList: this._dataList,
 			sortedDataList: this._dataList,
 			colSortDirs: {},
 		};
@@ -91,7 +90,7 @@ class App extends Component {
 	_onFilterFirstNameChange(e) {
 		if (!e.target.value) {
 			this.setState({
-				filteredDataList: this._dataList,
+				sortedDataList: this._dataList,
 			});
 		}
 
@@ -106,14 +105,14 @@ class App extends Component {
 		}
 
 		this.setState({
-		filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			sortedDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterLastNameChange(e) {
 		if (!e.target.value) {
 			this.setState({
-				filteredDataList: this._dataList,
+				sortedDataList: this._dataList,
 			});
 		}
 
@@ -128,14 +127,14 @@ class App extends Component {
 		}
 
 		this.setState({
-			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			sortedDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterCityChange(e) {
 		if (!e.target.value) {
 			this.setState({
-				filteredDataList: this._dataList,
+				sortedDataList: this._dataList,
 			});
 		}
 
@@ -150,14 +149,14 @@ class App extends Component {
 		}
 
 		this.setState({
-			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			sortedDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterStreetChange(e) {
 		if (!e.target.value) {
 			this.setState({
-				filteredDataList: this._dataList,
+				sortedDataList: this._dataList,
 			});
 		}
 
@@ -172,14 +171,14 @@ class App extends Component {
 		}
 
 		this.setState({
-			filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			sortedDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
 	_onFilterZipCodeChange(e) {
 		if (!e.target.value) {
 			this.setState({
-				filteredDataList: this._dataList,
+				sortedDataList: this._dataList,
 			});
 		}
 
@@ -194,7 +193,7 @@ class App extends Component {
 		}
 
 		this.setState({
-		filteredDataList: new DataListWrapper(filteredIndexes, this._dataList),
+			sortedDataList: new DataListWrapper(filteredIndexes, this._dataList),
 		});
 	}
 
