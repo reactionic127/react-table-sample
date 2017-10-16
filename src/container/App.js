@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from '../assets/logo.svg';
 import ReactTable from "react-table";
+import matchSorter from 'match-sorter'
 import { makeData } from "../components/Utils";
 import '../styles/App.css';
 import "react-table/react-table.css";
@@ -15,6 +16,7 @@ class App extends Component {
 
 	render() {
 		const { data } = this.state;
+		console.log(data)
 		return (
 			<div className="App">
 				<header className="App-header">
@@ -22,76 +24,81 @@ class App extends Component {
 					<h1 className="App-title">React Table Filter&Sort</h1>
 				</header>
 				<div className="full-width margin-t-10">
-					<input
-						className="custom-input"
-						onChange={this._onFilterFirstNameChange}
-						placeholder="Filter by First Name"
-					/>
-					<input
-						className="custom-input"
-						onChange={this._onFilterLastNameChange}
-						placeholder="Filter by Last Name"
-					/>
-					<input
-						className="custom-input"
-						onChange={this._onFilterCityChange}
-						placeholder="Filter by City"
-					/>
-					<input
-						className="custom-input"
-						onChange={this._onFilterStreetChange}
-						placeholder="Filter by Street"
-					/>
-					<input
-						className="custom-input"
-						onChange={this._onFilterZipCodeChange}
-						placeholder="Filter by Zip Code"
-					/>
-					<br />
 					<ReactTable
 						data={data}
-						columns={[
-							{
-							Header: "Name",
-							columns: [
-								{
-								Header: "First Name (Sorted by Length, A-Z)",
-								accessor: "firstName",
-								sortMethod: (a, b) => {
-									if (a.length === b.length) {
-									return a > b ? 1 : -1;
+						filterable
+						defaultFilterMethod={(filter, row) =>
+            				String(row[filter.id]) === filter.value}
+						columns={
+							[{
+								columns: [
+									{
+										Header: "First Name",
+										accessor: "firstName",
+										sortMethod: (a, b) => {
+											if (a.length === b.length) {
+												return a > b ? 1 : -1;
+											}
+											return a.length > b.length ? 1 : -1;
+										},
+										filterMethod: (filter, rows) =>
+											matchSorter(rows, filter.value, { keys: ["firstName"] }),
+										filterAll: true
+									},
+									{
+										Header: "Last Name",
+										id: "lastName",
+										accessor: d => d.lastName,
+										sortMethod: (a, b) => {
+											if (a === b) {
+												return 0;
+											}
+											const aReverse = a.split("").reverse().join("");
+											const bReverse = b.split("").reverse().join("");
+											return aReverse > bReverse ? 1 : -1;
+										},
+										filterMethod: (filter, rows) =>
+											matchSorter(rows, filter.value, { keys: ["lastName"] }),
+										filterAll: true
+									},
+									{
+										Header: "Age",
+										id: "age",
+										accessor: d => d.age,
+										sortMethod: (a, b) => {
+											if (a === b) {
+												return 0;
+											}
+											const aReverse = a.split("").reverse().join("");
+											const bReverse = b.split("").reverse().join("");
+											return aReverse > bReverse ? 1 : -1;
+										},
+										filterMethod: (filter, rows) =>
+											matchSorter(rows, filter.value, { keys: ["age"] }),
+										filterAll: true
+									},
+									{
+										Header: "Status",
+										id: "status",
+										accessor: d => d.status,
+										sortMethod: (a, b) => {
+											if (a === b) {
+												return 0;
+											}
+											const aReverse = a.split("").reverse().join("");
+											const bReverse = b.split("").reverse().join("");
+											return aReverse > bReverse ? 1 : -1;
+										},
+										filterMethod: (filter, rows) =>
+											matchSorter(rows, filter.value, { keys: ["status"] }),
+										filterAll: true
 									}
-									return a.length > b.length ? 1 : -1;
-								}
-								},
-								{
-								Header: "Last Name (Sorted in reverse, A-Z)",
-								id: "lastName",
-								accessor: d => d.lastName,
-								sortMethod: (a, b) => {
-									if (a === b) {
-									return 0;
-									}
-									const aReverse = a.split("").reverse().join("");
-									const bReverse = b.split("").reverse().join("");
-									return aReverse > bReverse ? 1 : -1;
-								}
-								}
-							]
-							},
-							{
-							Header: "Info",
-							columns: [
-								{
-								Header: "Age",
-								accessor: "age"
-								}
-							]
-							}
-						]}
-						defaultPageSize={10}
+								]
+							}]
+						}
+						defaultPageSize={15}
 						className="-striped -highlight"
-						/>
+					/>
 				</div>
 			</div>
 		);
