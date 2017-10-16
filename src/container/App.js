@@ -226,7 +226,7 @@ class App extends Component {
 	}
 
 	render() {
-		const {filteredDataList, colSortDirs} = this.state;
+		const {sortedDataList, colSortDirs} = this.state;
 		let width = document.body.clientWidth;
 		return (
 			<div className="App">
@@ -263,7 +263,7 @@ class App extends Component {
 					<br />
 					<Table
 						rowHeight={50}
-						rowsCount={filteredDataList.getSize()}
+						rowsCount={sortedDataList.getSize()}
 						headerHeight={50}
 						width={width}
 						height={500}
@@ -278,7 +278,7 @@ class App extends Component {
 									ID
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							fixed={true}
 							width={width/10}
 						/>
@@ -291,7 +291,7 @@ class App extends Component {
 									First Name
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							fixed={true}
 							width={width/6}
 						/>
@@ -304,7 +304,7 @@ class App extends Component {
 									Last Name
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							fixed={true}
 							width={width/6}
 						/>
@@ -317,7 +317,7 @@ class App extends Component {
 									City
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							width={width/6}
 						/>
 						<Column
@@ -329,7 +329,7 @@ class App extends Component {
 									Street
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							width={width/6}
 						/>
 						<Column
@@ -341,7 +341,7 @@ class App extends Component {
 									Zip Code
 								</SortHeaderCell>
 							}
-							cell={<TextCell data={filteredDataList} />}
+							cell={<TextCell data={sortedDataList} />}
 							width={width/6}
 						/>
 					</Table>
